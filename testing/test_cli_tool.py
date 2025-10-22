@@ -12,20 +12,19 @@ def test_add_task():
 def test_complete_task_with_script(tmp_path):
     """Runs everything in one subprocess so state is shared."""
     script_path = tmp_path / "script.py"
-    script_content = f"""
-import sys
-sys.path.insert(0, '{os.getcwd().replace("\\\\", "/")}')
+    script_content = (
+        "import sys, os\n"
+        "sys.path.insert(0, '{0}')\n"
+        "from lib.models import Task, User\n"
+        "user = User('Bob')\n"
+        "task = Task('Finish lab')\n"
+        "user.add_task(task)\n"
+        "task.complete()\n"
+    ).format(os.getcwd().replace("\\", "/"))
 
-from lib.models import Task, User
-
-users = {{}}
-user = User("Bob")
-users["Bob"] = user
-task = Task("Finish lab")
-user.add_task(task)
-task.complete()
-"""
+    # write and run the script
     script_path.write_text(script_content)
-
     result = subprocess.run(["python", str(script_path)], capture_output=True, text=True)
+
+    # check that the completion message appears
     assert "✅ Task 'Finish lab' completed." in result.stdout

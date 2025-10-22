@@ -1,34 +1,28 @@
-# TODO: Define the Task class
-# Each task should store a title and a completed status (default False)
-# Add a complete() method that marks the task as completed and prints confirmation
-
 class Task:
-    def __init__(self, title):
-        # TODO: Assign the title
-        # TODO: Set completed to False
-        pass
+    def __init__(self, title: str):
+        # store the title and mark as not completed yet
+        self.title = title
+        self.completed = False
 
     def complete(self):
-        # TODO: Mark the task as complete
-        # TODO: Print a confirmation message
-        pass
-
-# TODO: Define the User class
-# Each user has a name and a list of tasks
-# Add methods to add tasks and search tasks by title
+        # mark the task as done and print a confirmation
+        self.completed = True
+        print(f"✅ Task '{self.title}' completed.")
 
 class User:
-    def __init__(self, name):
-        # TODO: Store the user's name
-        # TODO: Initialize an empty list of tasks
-        pass
+    def __init__(self, name: str):
+        # store the user's name and start with an empty task list
+        self.name = name
+        self.tasks = []
 
-    def add_task(self, task):
-        # TODO: Add the task to the user's task list
-        # TODO: Print a message confirming the task was added
-        pass
+    def add_task(self, task: Task):
+        # keep the task and print a friendly message
+        self.tasks.append(task)
+        print(f"📌 Task '{task.title}' added to {self.name}.")
 
-    def get_task_by_title(self, title):
-        # TODO: Search for a task by its title in the user's task list
-        # TODO: Return the matching task or None
-        pass
+    def get_task_by_title(self, title: str):
+        # find a task with the given title or return None
+        for t in self.tasks:
+            if t.title == title:
+                return t
+        return None
