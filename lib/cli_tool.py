@@ -2,7 +2,7 @@
 
 import argparse
 
-from models import Task, User
+from .models import Task, User
 
 # Global dictionary to store users and their tasks
 users = {}

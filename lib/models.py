@@ -33,8 +33,7 @@ class User:
         # TODO: Add the task to the user's task list
         self.task.append(task)
         # TODO: Print a message confirming the task was added
-        print(f"Task '{task.title}' added to user '{self.name}'.")
-
+        print(f"📌 Task '{task.title}' added to user '{self.name}'.")
     def get_task_by_title(self, title):
         # TODO: Search for a task by its title in the user's task list
         for t in self.task:
