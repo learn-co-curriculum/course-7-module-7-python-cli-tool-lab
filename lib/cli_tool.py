@@ -1,48 +1,45 @@
-# cli_tool.py
-
 import argparse
 from models import Task, User
 
 # Global dictionary to store users and their tasks
 users = {}
 
-# TODO: Implement function to add a task for a user
+# Function to add a task for a user
 def add_task(args):
-    # - Check if the user exists, if not, create one
-    # - Create a new Task with the given title
-    # - Add the task to the user's task list
-    pass
+    username = args.user
+    title = args.title
 
-# TODO: Implement function to mark a task as complete
+    # Check if the user exists, if not create one
+    if username not in users:
+        users[username] = User(username)
+        print(f"User '{username}' created.")
+
+    # Create a new Task
+    task = Task(title)
+
+    # Add task to the user
+    users[username].add_task(task)
+
+
+# Function to mark a task as complete
 def complete_task(args):
-    # - Look up the user by name
-    # - Look up the task by title
-    # - Mark the task as complete
-    # - Print appropriate error messages if not found
-    pass
+    username = args.user
+    title = args.title
 
-# CLI entry point
-def main():
-    parser = argparse.ArgumentParser(description="Task Manager CLI")
-    subparsers = parser.add_subparsers()
+    # Check if user exists
+    if username not in users:
+        print(f"Error: User '{username}' not found.")
+        return
 
-    # Subparser for adding tasks
-    add_parser = subparsers.add_parser("add-task", help="Add a task for a user")
-    add_parser.add_argument("user")
-    add_parser.add_argument("title")
-    add_parser.set_defaults(func=add_task)
+    user = users[username]
 
-    # Subparser for completing tasks
-    complete_parser = subparsers.add_parser("complete-task", help="Complete a user's task")
-    complete_parser.add_argument("user")
-    complete_parser.add_argument("title")
-    complete_parser.set_defaults(func=complete_task)
+    # Look up the task
+    task = user.get_task_by_title(title)
 
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
+    if task is None:
+        print(f"Error: Task '{title}' not found for user '{username}'.")
+        return
 
-if __name__ == "__main__":
-    main()
+    # Mark task as complete
+    task.completed = True
+    print(f"Task '{title}' marked as complete for {username}.")
