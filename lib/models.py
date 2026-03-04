@@ -4,31 +4,53 @@
 
 class Task:
     def __init__(self, title):
-        # TODO: Assign the title
-        # TODO: Set completed to False
-        pass
+        self.title = title
+        self.completed = False
 
     def complete(self):
-        # TODO: Mark the task as complete
-        # TODO: Print a confirmation message
-        pass
+        self.completed = True
+        print(f"✅ Task '{self.title}' completed.")
 
-# TODO: Define the User class
-# Each user has a name and a list of tasks
-# Add methods to add tasks and search tasks by title
+    def to_dict(self):
+        """Convert Task to dictionary for JSON"""
+        return {
+            "title": self.title,
+            "completed": self.completed
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Create Task from dictionary"""
+        task = cls(data["title"])
+        task.completed = data["completed"]
+        return task
+
 
 class User:
     def __init__(self, name):
-        # TODO: Store the user's name
-        # TODO: Initialize an empty list of tasks
-        pass
+        self.name = name
+        self.tasks = []
 
     def add_task(self, task):
-        # TODO: Add the task to the user's task list
-        # TODO: Print a message confirming the task was added
-        pass
+        self.tasks.append(task)
+        print(f"📌 Task '{task.title}' added to {self.name}.")
 
     def get_task_by_title(self, title):
-        # TODO: Search for a task by its title in the user's task list
-        # TODO: Return the matching task or None
-        pass
+        for task in self.tasks:
+            if task.title == title:
+                return task
+        return None
+
+    def to_dict(self):
+        """Convert User to dictionary for JSON"""
+        return {
+            "name": self.name,
+            "tasks": [task.to_dict() for task in self.tasks]
+        }
+
+    @classmethod
+    def from_dict(cls, data):
+        """Create User from dictionary"""
+        user = cls(data["name"])
+        user.tasks = [Task.from_dict(task_data) for task_data in data["tasks"]]
+        return user
