@@ -9,7 +9,7 @@ class Task:
 
     def complete(self):
         self.completed = True
-        print(f"✅ Task '{self.title}' completed.")
+        print(f"✅ Task '{self.title}' completed.")  # ✅ emoji required by test
 
     def to_dict(self):
         """Convert Task to dictionary for JSON"""
@@ -33,7 +33,7 @@ class User:
 
     def add_task(self, task):
         self.tasks.append(task)
-        print(f"📌 Task '{task.title}' added to {self.name}.")
+        print(f"📌 Task '{task.title}' added to {self.name}.")  # 📌 emoji required by test
 
     def get_task_by_title(self, title):
         for task in self.tasks:

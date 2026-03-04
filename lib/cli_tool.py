@@ -1,12 +1,19 @@
 # cli_tool.py
+# lib/cli_tool.py
 import argparse
-import sys
 import json
 import os
+import sys
 
 # Global dictionary to store users and their tasks
 users = {}
 DB_FILE = "users.json"
+
+# Import models correctly
+try:
+    from .models import Task, User
+except ImportError:
+    from models import Task, User
 
 # Load users from file when program starts
 def load_users():
@@ -24,12 +31,7 @@ def save_users():
     with open(DB_FILE, "w") as f:
         json.dump(data, f, indent=4)
 
-# Handle both direct execution and module execution
-try:
-    from .models import Task, User
-except ImportError:
-    from models import Task, User
-
+# CLI functions
 def add_task(args):
     user = users.get(args.user)
     if not user:
@@ -38,7 +40,7 @@ def add_task(args):
     
     task = Task(args.title)
     user.add_task(task)
-    save_users()  # ✅ Save after adding
+    save_users()  # Save after adding
 
 def complete_task(args):
     user = users.get(args.user)
@@ -52,7 +54,7 @@ def complete_task(args):
         return
     
     task.complete()
-    save_users()  # ✅ Save after completing
+    save_users()  # Save after completing
 
 def list_tasks(args):
     user = users.get(args.user)
@@ -61,16 +63,17 @@ def list_tasks(args):
         return
     
     if not user.tasks:
-        print(f"📝 {user.name} has no tasks.")
+        print(f"{user.name} has no tasks.")
         return
     
-    print(f"📋 Tasks for {user.name}:")
+    print(f"Tasks for {user.name}:")
     for i, task in enumerate(user.tasks, 1):
         status = "✅" if task.completed else "⏳"
         print(f"  {i}. {status} {task.title}")
 
+# Main CLI parser
 def main():
-    load_users()  # ✅ Load at start
+    load_users()  # Load at start
     
     parser = argparse.ArgumentParser(
         description="Task Manager CLI - Manage tasks for users",
@@ -106,4 +109,3 @@ Examples:
 
 if __name__ == "__main__":
     main()
-    
