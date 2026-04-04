@@ -1,43 +1,96 @@
 # cli_tool.py
 
 import argparse
-from models import Task, User
+from models import Book, Bookstore
 
-# Global dictionary to store users and their tasks
-users = {}
+store = Bookstore("My Bookstore")
 
-# TODO: Implement function to add a task for a user
-def add_task(args):
-    # - Check if the user exists, if not, create one
-    # - Create a new Task with the given title
-    # - Add the task to the user's task list
-    pass
+def add_book(args):
+    # Book object added to the store
+    book = Book(args.title, args.author, args.price, args.stock)
+    store.add_book(book)
 
-# TODO: Implement function to mark a task as complete
-def complete_task(args):
-    # - Look up the user by name
-    # - Look up the task by title
-    # - Mark the task as complete
-    # - Print appropriate error messages if not found
-    pass
+def list_books(args):
+    # List all books in the store
+    store.list_books()
 
-# CLI entry point
+def view_books(args):
+    # Get and display a single book
+    book = store.get_book(args.title)
+    if book:
+        print(f"{book.title} by {book.author} (Ksh {book.price}, Stock: {book.stock})")
+
+def update_price(args):
+    # Update the price of a book
+    store.update_price(args.title, args.price)
+
+def restock_book(args):
+    # Restock a book
+    store.restock_book(args.title, args.quantity)
+
+def sell_book(args):
+    # Sell one copy of a book
+    store.sell_book(args.title)
+
+def delete_book(args):
+    # Delete a book from the store
+    store.delete_book(args.title)
+
+def list_available(args):
+    # List only available books
+    store.list_available()
+
+
+
 def main():
-    parser = argparse.ArgumentParser(description="Task Manager CLI")
-    subparsers = parser.add_subparsers()
+    parser = argparse.ArgumentParser(description="Bookstore CLI")
+    subparsers = parser.add_subparsers(dest="command")
 
-    # Subparser for adding tasks
-    add_parser = subparsers.add_parser("add-task", help="Add a task for a user")
-    add_parser.add_argument("user")
+    # Add book command
+    add_parser = subparsers.add_parser("add-book")
     add_parser.add_argument("title")
-    add_parser.set_defaults(func=add_task)
+    add_parser.add_argument("author")
+    add_parser.add_argument("price", type=float)
+    add_parser.add_argument("stock", type=int)
+    add_parser.set_defaults(func=add_book)
 
-    # Subparser for completing tasks
-    complete_parser = subparsers.add_parser("complete-task", help="Complete a user's task")
-    complete_parser.add_argument("user")
-    complete_parser.add_argument("title")
-    complete_parser.set_defaults(func=complete_task)
+    # List books command
+    list_cmd = subparsers.add_parser("list-books")
+    list_cmd.set_defaults(func=list_books)
 
+    # View book command
+    view = subparsers.add_parser("view-book")
+    view.add_argument("title")
+    view.set_defaults(func=view_books)
+
+    # update-price command
+    price = subparsers.add_parser("update-price")
+    price.add_argument("title")
+    price.add_argument("price", type=float)
+    price.set_defaults(func=update_price)
+
+    # restock-book command
+    restock = subparsers.add_parser("restock-book")
+    restock.add_argument("title")
+    restock.add_argument("quantity", type=int)
+    restock.set_defaults(func=restock_book)
+
+    # sell-book command
+
+    sell = subparsers.add_parser("sell-book")
+    sell.add_argument("title")
+    sell.set_defaults(func=sell_book)
+
+    # delete-book command
+    delete = subparsers.add_parser("delete-book")
+    delete.add_argument("title")
+    delete.set_defaults(func=delete_book)
+
+    # list-available command
+    available = subparsers.add_parser("list-available")
+    available.set_defaults(func=list_available)
+
+    # execute command
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
@@ -45,4 +98,9 @@ def main():
         parser.print_help()
 
 if __name__ == "__main__":
-    main()
+    main()        
+
+
+
+
+
