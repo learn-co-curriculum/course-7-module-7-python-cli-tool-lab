@@ -1,192 +1,97 @@
+# Bookstore CLI 
 
-# Module Lab: Building a Python Command-Line Interface Tool
+## Table of Contents
+- [Project Description](#project-description)
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Setup Instructions](#setup-instructions)
+- [How to Use](#how-to-use)
+- [Data Storage (JSON Structure)](#data-storage-json-structure)
+- [Folder Structure](#folder-structure)
+- [Future Improvements](#future-improvements)
+- [Author](#author)
 
-## Learning Goals
 
-- Build modular and user-friendly command-line applications using `argparse`.
-- Apply object-oriented programming (OOP) to map real-world objects to CLI commands.
-- Validate user input and provide helpful feedback.
-- Structure CLI tools for maintainability and scalability.
+## Project Description
+Bookstore CLI Tool is a Python-based Command Line Interface (CLI) application that allows users to manage a simple bookstore inventory.
 
-## Introduction
+The application demonstrates Object-Oriented Programming (OOP) concepts such as classes, objects, and file handling. It also uses JSON for data persistence, allowing books to be saved and loaded between sessions.
 
-In this lab, you'll design and implement a Python Command-Line Interface (CLI) tool that models real-world behavior using OOP. You'll use Python's built-in `argparse` module to define commands, and object-oriented classes to manage task-related actions.
+Users can add books, view available books, and search for specific books directly from the terminal.
 
-The CLI tool will allow users to:
 
-- Add tasks to a user account via `add-task`
-- Mark tasks as complete via `complete-task`
-- Display feedback directly in the terminal
+## Features
+- Add new books to the inventory
+- View all available books
+- View details of a specific book
+- Persistent storage using JSON
+- Automatic loading and saving of data
+- Beginner-friendly CLI interface
 
-This lab combines CLI architecture with OOP principles to help you build intuitive and testable developer tools.
+---
+
+## Technologies Used
+- Python 3
+- Object-Oriented Programming (OOP)
+- JSON (for data storage)
+- File Handling
+- Command Line Interface (CLI)
+
 
 ## Setup Instructions
 
-### Fork and Clone the Repository
+### 1. Clone the repository
+1. git clone <your-repo-link>
+2. Navigate to project folder 
+cd python-cli-tool-lab
+3. Run the application
+python3 lib/cli_tool.py
 
-1. Go to the provided GitHub repository link.
-2. Fork the repository to your GitHub account.
-3. Clone the forked repository to your local machine using:
+## How to Use
+1. Add a Book
+python3 lib/cli_tool.py add-book "Python 101" "Guido" 300 5
+2. View All Books
+python3 lib/cli_tool.py list-books
+3. View a Specific Book
+python3 lib/cli_tool.py view-book "Python 101"
 
-```bash
-git clone <repo-url>
-cd module-lab-python-cli-tool
-```
+## Data Storage (JSON Structure)
+The application stores data in:
+- lib/data.json
+- Expected Format:
+JSON
+{
+  "name": "My Bookstore",
+  "books": [
+    {
+      "title": "Python 101",
+      "author": "Guido",
+      "price": 300,
+      "stock": 5
+    }
+  ]
+}
 
-### Install Python and Dependencies
+## Folder Structure
 
-Ensure Python is installed:
+python-cli-tool-lab/
+├── lib/
+│   ├── cli_tool.py
+│   ├── models.py
+│   ├── data.json
+├── tests/
+├── README.md
+├── requirements.txt
 
-```bash
-python --version
-```
+## Future Improvements
+1. Add book categories (Programming, Fiction, etc.)
+2. Add update/edit book functionality
+3. Add search by author
+4. Improve CLI output formatting (tables, colors)
+5. Add admin authentication system
+6. Export data to CSV or PDF
 
-Optionally, create and activate a virtual environment:
+## Author
+Agnes Ng'anga
+GitHub: https://github.com/Mwihaki112
 
-```bash
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate   # Windows
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
-
----
-
-## Tasks
-
-### Task 1: Define the Problem
-
-Build a CLI tool that allows users to:
-
-- Add tasks to their name
-- Mark tasks as complete
-- See helpful feedback after actions
-
-The tool should simulate how users interact with a task manager, mapping commands to behavior using classes.
-
----
-
-### Task 2: Determine the Design
-
-Your application will be split into:
-
-- A `Task` class to represent individual tasks
-- A `User` class to group tasks under a user's name
-- A CLI controller using `argparse` with `subparsers` to route actions
-
-This design keeps your logic modular, object-oriented, and easy to extend.
-
----
-
-### Task 3: Develop the CLI Tool
-
-#### Step 1: Define Your Classes in `lib/models.py`
-
-```python
-class Task:
-    def __init__(self, title):
-        self.title = title
-        self.completed = False
-
-    def complete(self):
-        self.completed = True
-        print(f"✅ Task '{self.title}' completed.")
-
-class User:
-    def __init__(self, name):
-        self.name = name
-        self.tasks = []
-
-    def add_task(self, task):
-        self.tasks.append(task)
-        print(f"📌 Task '{task.title}' added to {self.name}.")
-```
-
-#### Step 2: Create the CLI in `lib/cli_tool.py`
-
-```python
-import argparse
-from lib.models import Task, User
-
-users = {}
-
-def add_task(args):
-    user = users.get(args.user) or User(args.user)
-    users[args.user] = user
-    task = Task(args.title)
-    user.add_task(task)
-
-def complete_task(args):
-    user = users.get(args.user)
-    if user:
-        for task in user.tasks:
-            if task.title == args.title:
-                task.complete()
-                return
-        print("❌ Task not found.")
-    else:
-        print("❌ User not found.")
-
-def main():
-    parser = argparse.ArgumentParser(description="Task Manager CLI")
-    subparsers = parser.add_subparsers()
-
-    add_parser = subparsers.add_parser("add-task", help="Add a new task")
-    add_parser.add_argument("user")
-    add_parser.add_argument("title")
-    add_parser.set_defaults(func=add_task)
-
-    complete_parser = subparsers.add_parser("complete-task", help="Complete a task")
-    complete_parser.add_argument("user")
-    complete_parser.add_argument("title")
-    complete_parser.set_defaults(func=complete_task)
-
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
-
-if __name__ == "__main__":
-    main()
-```
-
----
-
-### Task 4: Run and Test the CLI Tool
-
-```bash
-# Add a task
-python lib/cli_tool.py add-task Alice "Write unit tests"
-
-# Complete a task
-python lib/cli_tool.py complete-task Alice "Write unit tests"
-```
-
----
-
-## Best Practices
-
-- Use `argparse` to guide the user experience.
-- Validate input with helpful error messages.
-- Keep CLI and OOP logic modular and separated.
-- Document your script and commands clearly in the README.
-- Use the `__main__` guard to make your CLI script reusable.
-
----
-
-## Conclusion
-
-After completing this lab, you will:
-
-✅ Build structured and modular CLI tools in Python  
-✅ Map real-world entities using object-oriented design  
-✅ Create terminal experiences with helpful input/output  
-✅ Apply argparse and OOP to real development workflows
-
-These skills help you build maintainable CLI tools that scale with complexity and support real-world use cases.
