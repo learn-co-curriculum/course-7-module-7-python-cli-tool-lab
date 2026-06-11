@@ -1,192 +1,65 @@
+#  Task Manager CLI
 
-# Module Lab: Building a Python Command-Line Interface Tool
+A simple **Command-Line Interface (CLI)** application built with Python that allows users to manage tasks using object-oriented programming (OOP) and `argparse`.
 
-## Learning Goals
-
-- Build modular and user-friendly command-line applications using `argparse`.
-- Apply object-oriented programming (OOP) to map real-world objects to CLI commands.
-- Validate user input and provide helpful feedback.
-- Structure CLI tools for maintainability and scalability.
-
-## Introduction
-
-In this lab, you'll design and implement a Python Command-Line Interface (CLI) tool that models real-world behavior using OOP. You'll use Python's built-in `argparse` module to define commands, and object-oriented classes to manage task-related actions.
-
-The CLI tool will allow users to:
-
-- Add tasks to a user account via `add-task`
-- Mark tasks as complete via `complete-task`
-- Display feedback directly in the terminal
-
-This lab combines CLI architecture with OOP principles to help you build intuitive and testable developer tools.
-
-## Setup Instructions
-
-### Fork and Clone the Repository
-
-1. Go to the provided GitHub repository link.
-2. Fork the repository to your GitHub account.
-3. Clone the forked repository to your local machine using:
-
-```bash
-git clone <repo-url>
-cd module-lab-python-cli-tool
-```
-
-### Install Python and Dependencies
-
-Ensure Python is installed:
-
-```bash
-python --version
-```
-
-Optionally, create and activate a virtual environment:
-
-```bash
-python -m venv venv
-source venv/bin/activate  # macOS/Linux
-venv\Scripts\activate   # Windows
-```
-
-Install dependencies:
-
-```bash
-pip install -r requirements.txt
-```
+The tool supports adding tasks, listing tasks, and marking tasks as complete directly from the terminal.
 
 ---
 
-## Tasks
+##  Features
 
-### Task 1: Define the Problem
-
-Build a CLI tool that allows users to:
-
-- Add tasks to their name
-- Mark tasks as complete
-- See helpful feedback after actions
-
-The tool should simulate how users interact with a task manager, mapping commands to behavior using classes.
+-  Create and manage users in-memory
+-  Add tasks for a user
+-  List all tasks for a user
+-  Mark tasks as completed
+-  Lightweight CLI using `argparse`
+-  Object-Oriented Design (Task + User classes)
 
 ---
 
-### Task 2: Determine the Design
+##  Project Structure
 
-Your application will be split into:
 
-- A `Task` class to represent individual tasks
-- A `User` class to group tasks under a user's name
-- A CLI controller using `argparse` with `subparsers` to route actions
+lib/
+│
+├── cli_tool.py     # CLI entry point
+├── models.py       # Task and User classes
+└── __init__.py
 
-This design keeps your logic modular, object-oriented, and easy to extend.
+## Installation
 
----
+Clone the repository:
 
-### Task 3: Develop the CLI Tool
+git clone git@github.com:wanja-juma/course-7-module-7-python-cli-tool-lab.git
 
-#### Step 1: Define Your Classes in `lib/models.py`
+cd task-manager-cli
 
-```python
-class Task:
-    def __init__(self, title):
-        self.title = title
-        self.completed = False
+## How It Works
 
-    def complete(self):
-        self.completed = True
-        print(f"✅ Task '{self.title}' completed.")
+Each User holds a list of Task objects.
+Each Task has:
+- title
+- completed status
+CLI commands map directly to Python functions using argparse.
+Data is stored in memory only (no database or file storage).
 
-class User:
-    def __init__(self, name):
-        self.name = name
-        self.tasks = []
+### Testing
 
-    def add_task(self, task):
-        self.tasks.append(task)
-        print(f"📌 Task '{task.title}' added to {self.name}.")
-```
+Run tests using:
 
-#### Step 2: Create the CLI in `lib/cli_tool.py`
+pytest
 
-```python
-import argparse
-from lib.models import Task, User
+### Future Improvements
 
-users = {}
+Persistent storage (JSON or database)
+Delete tasks functionality
+Due dates and priorities
+User authentication
+Export tasks to file
 
-def add_task(args):
-    user = users.get(args.user) or User(args.user)
-    users[args.user] = user
-    task = Task(args.title)
-    user.add_task(task)
+### Tech Stack
 
-def complete_task(args):
-    user = users.get(args.user)
-    if user:
-        for task in user.tasks:
-            if task.title == args.title:
-                task.complete()
-                return
-        print("❌ Task not found.")
-    else:
-        print("❌ User not found.")
-
-def main():
-    parser = argparse.ArgumentParser(description="Task Manager CLI")
-    subparsers = parser.add_subparsers()
-
-    add_parser = subparsers.add_parser("add-task", help="Add a new task")
-    add_parser.add_argument("user")
-    add_parser.add_argument("title")
-    add_parser.set_defaults(func=add_task)
-
-    complete_parser = subparsers.add_parser("complete-task", help="Complete a task")
-    complete_parser.add_argument("user")
-    complete_parser.add_argument("title")
-    complete_parser.set_defaults(func=complete_task)
-
-    args = parser.parse_args()
-    if hasattr(args, "func"):
-        args.func(args)
-    else:
-        parser.print_help()
-
-if __name__ == "__main__":
-    main()
-```
-
----
-
-### Task 4: Run and Test the CLI Tool
-
-```bash
-# Add a task
-python lib/cli_tool.py add-task Alice "Write unit tests"
-
-# Complete a task
-python lib/cli_tool.py complete-task Alice "Write unit tests"
-```
-
----
-
-## Best Practices
-
-- Use `argparse` to guide the user experience.
-- Validate input with helpful error messages.
-- Keep CLI and OOP logic modular and separated.
-- Document your script and commands clearly in the README.
-- Use the `__main__` guard to make your CLI script reusable.
-
----
-
-## Conclusion
-
-After completing this lab, you will:
-
-✅ Build structured and modular CLI tools in Python  
-✅ Map real-world entities using object-oriented design  
-✅ Create terminal experiences with helpful input/output  
-✅ Apply argparse and OOP to real development workflows
-
-These skills help you build maintainable CLI tools that scale with complexity and support real-world use cases.
+Python 3
+argparse (CLI handling)
+OOP (classes and objects)
+pytest (testing)
