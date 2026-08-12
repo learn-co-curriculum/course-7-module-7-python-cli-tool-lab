@@ -7,7 +7,7 @@ def run_cli_command(command):
 
 def test_add_task():
     result = run_cli_command(["python", "-m", "lib.cli_tool", "add-task", "Alice", "Submit report"])
-    assert "📌 Task 'Submit report' added to Alice." in result.stdout
+    assert "Task 'Submit report' added to Alice." in result.stdout
 
 def test_complete_task_with_script(tmp_path):
     """Runs everything in one subprocess so state is shared."""

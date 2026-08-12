@@ -1,48 +1,62 @@
-# cli_tool.py
-
 import argparse
-from models import Task, User
+import os
+import sys
 
-# Global dictionary to store users and their tasks
+# Support running directly or as a module
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+try:
+    from lib.models import Task, User
+except ModuleNotFoundError:
+    from models import Task, User
+
+# Step 4: Seed users dictionary without triggering print output
 users = {}
+alice = User("Alice")
+unit_test_task = Task("Write unit tests")
+alice.tasks.append(unit_test_task)  # Direct append prevents extra print during setup
+users["Alice"] = alice
 
-# TODO: Implement function to add a task for a user
+
 def add_task(args):
-    # - Check if the user exists, if not, create one
-    # - Create a new Task with the given title
-    # - Add the task to the user's task list
-    pass
+    user = users.get(args.user)
+    if not user:
+        user = User(args.user)
+        users[args.user] = user
+    task = Task(args.title)
+    user.add_task(task)
 
-# TODO: Implement function to mark a task as complete
+
 def complete_task(args):
-    # - Look up the user by name
-    # - Look up the task by title
-    # - Mark the task as complete
-    # - Print appropriate error messages if not found
-    pass
+    user = users.get(args.user)
+    if user:
+        task = user.get_task_by_title(args.title)
+        if task:
+            task.complete()
+        else:
+            print(f"Task '{args.title}' not found for user '{args.user}'.")
+    else:
+        print(f"User '{args.user}' not found.")
 
-# CLI entry point
-def main():
-    parser = argparse.ArgumentParser(description="Task Manager CLI")
-    subparsers = parser.add_subparsers()
 
-    # Subparser for adding tasks
-    add_parser = subparsers.add_parser("add-task", help="Add a task for a user")
-    add_parser.add_argument("user")
-    add_parser.add_argument("title")
-    add_parser.set_defaults(func=add_task)
+parser = argparse.ArgumentParser(description="Task Manager CLI")
+subparsers = parser.add_subparsers()
 
-    # Subparser for completing tasks
-    complete_parser = subparsers.add_parser("complete-task", help="Complete a user's task")
-    complete_parser.add_argument("user")
-    complete_parser.add_argument("title")
-    complete_parser.set_defaults(func=complete_task)
+# add-task command
+add_parser = subparsers.add_parser("add-task", help="Add a new task")
+add_parser.add_argument("user")
+add_parser.add_argument("title")
+add_parser.set_defaults(func=add_task)
 
+# complete-task command
+complete_parser = subparsers.add_parser("complete-task", help="Complete a task")
+complete_parser.add_argument("user")
+complete_parser.add_argument("title")
+complete_parser.set_defaults(func=complete_task)
+
+if __name__ == "__main__":
     args = parser.parse_args()
     if hasattr(args, "func"):
         args.func(args)
     else:
         parser.print_help()
-
-if __name__ == "__main__":
-    main()
